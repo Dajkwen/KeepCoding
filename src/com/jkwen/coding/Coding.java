@@ -15,6 +15,11 @@ public class Coding {
         return new Coding();
     }
 
+    /**
+     * 指定节点个数方式创建一棵二叉树
+     * @param count
+     * @return
+     */
     public TreeNode createBinaryTree(int count) {
         //输入节点值，按数组的形式创建，如果不想节点有值可以用 -1 代替
         int[] array = new int[count];
@@ -29,6 +34,10 @@ public class Coding {
         return binaryTree;
     }
 
+    /**
+     * 内建方式创建一棵二叉树
+     * @return
+     */
     public TreeNode createBinaryTreeByPreInput() {
         int[] array = new int[]{1,2,-1,3,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,5,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,6};
         binaryTree = createTreeNode(array, 0, 1);
@@ -57,6 +66,10 @@ public class Coding {
         return node;
     }
 
+    /**
+     * 前序
+     * @param node
+     */
     public void preDFSTravels(TreeNode node) {
         if (node == null) {
             return;
@@ -66,6 +79,10 @@ public class Coding {
         preDFSTravels(node.right);
     }
 
+    /**
+     * 中序
+     * @param node
+     */
     public void midDFSTravels(TreeNode node) {
         if (node == null) {
             return;
@@ -75,6 +92,10 @@ public class Coding {
         midDFSTravels(node.right);
     }
 
+    /**
+     * 后序
+     * @param node
+     */
     public void postDFSTravels(TreeNode node) {
         if (node == null) {
             return;
@@ -84,6 +105,10 @@ public class Coding {
         System.out.print(node.data);
     }
 
+    /**
+     * 前序，栈实现
+     * @param root
+     */
     public void preDFSTravels_Stack(TreeNode root) {
         if (root == null) {
             return;
@@ -102,6 +127,10 @@ public class Coding {
         }
     }
 
+    /**
+     * 中序，栈实现
+     * @param root
+     */
     public void midDFSTravels_Stack(TreeNode root) {
         if (root == null) {
             return;
@@ -127,6 +156,10 @@ public class Coding {
         }
     }
 
+    /**
+     * 后序，栈实现，对树具有破坏性
+     * @param root
+     */
     public void postDFSTravels_Stack(TreeNode root) {
         if (root == null) {
             return;
@@ -155,6 +188,10 @@ public class Coding {
         }
     }
 
+    /**
+     * 后序，栈实现
+     * @param root
+     */
     public void postDFSTravels_Stack_v2(TreeNode root) {
         if (root == null) {
             return;
@@ -188,6 +225,10 @@ public class Coding {
         }
     }
 
+    /**
+     * BFS
+     * @param root
+     */
     public void bfsTravels(TreeNode root) {
         if (root == null) {
             return;
@@ -214,6 +255,10 @@ public class Coding {
         bfsTravels_recursion(list);
     }
 
+    /**
+     * BFS, 递归实现
+     * @param nodes
+     */
     private void bfsTravels_recursion(LinkedList<TreeNode> nodes) {
         if (nodes == null || nodes.isEmpty()) {
             return;
@@ -288,6 +333,12 @@ public class Coding {
         return Math.max(node.level, leftLevel);
     }
 
+    /**
+     * 求树高
+     * @param node
+     * @param height
+     * @return
+     */
     public int getTreeHeight(TreeNode node, int height) {
         if (node == null) {
             return -1;
@@ -299,6 +350,11 @@ public class Coding {
         return Math.max(height, leftHeight);
     }
 
+    /**
+     * 求树高
+     * @param root
+     * @return
+     */
     public int getTreeHeight_Stack(TreeNode root) {
         if (root == null) {
             return -1;
@@ -330,5 +386,92 @@ public class Coding {
             stack.remove(node);
         }
         return height;
+    }
+
+    /**
+     * 冒泡排序
+     * @param src
+     */
+    public void bubbleSort(int[] src) {
+        System.out.print("排序前：");
+        for (int j : src) {
+            System.out.print(j + " ");
+        }
+
+        int sortEnd = src.length - 1;
+        for (int loopTime = 1; loopTime < src.length; loopTime++) {
+            int exchangeIndex = sortEnd;
+            boolean isSorted = true;
+            for (int i = 0; i < sortEnd; i++) {
+                if (src[i] > src[i + 1]) {
+                    int temp = src[i + 1];
+                    src[i + 1] = src[i];
+                    src[i] = temp;
+                    exchangeIndex = i;
+                    isSorted = false;
+                }
+            }
+            if (isSorted) {
+                break;
+            }
+            sortEnd = exchangeIndex;
+        }
+
+        System.out.print("\n排序后：");
+        for (int j : src) {
+            System.out.print(j + " ");
+        }
+    }
+
+    /**
+     * 冒泡排序的演变-鸡尾酒排序
+     * @param src
+     */
+    public void cocktailSort(int[] src) {
+        System.out.print("排序前：");
+        for (int j : src) {
+            System.out.print(j + " ");
+        }
+
+        int rightSortEnd = src.length - 1;
+        int leftSortEnd = 0;
+        for (int loopTime = 0; loopTime < src.length / 2; loopTime++) {
+            boolean isSorted = true;
+            int lastSortIndex = rightSortEnd;
+            for (int i = loopTime; i < rightSortEnd; i++) {
+                if (src[i] > src[i + 1]) {
+                    int temp = src[i + 1];
+                    src[i + 1] = src[i];
+                    src[i] = temp;
+                    isSorted = false;
+                    lastSortIndex = i;
+                }
+            }
+            if (isSorted) {
+                break;
+            }
+            rightSortEnd = lastSortIndex;
+
+            isSorted = true;
+            lastSortIndex = leftSortEnd;
+            for (int i = src.length - 1 - loopTime; i > leftSortEnd; i--) {
+                if (src[i] < src[i - 1]) {
+                    int temp = src[i - 1];
+                    src[i - 1] = src[i];
+                    src[i] = temp;
+                    isSorted = false;
+                    lastSortIndex = i;
+                }
+            }
+            if (isSorted) {
+                break;
+            }
+            leftSortEnd = lastSortIndex;
+        }
+
+        System.out.print("\n排序后：");
+        for (int j : src) {
+            System.out.print(j + " ");
+        }
     }
 }
