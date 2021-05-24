@@ -5,6 +5,8 @@ public class TreeNode {
 
     public int level;
 
+    public int index;
+
     public TreeNode left;
 
     public TreeNode right;

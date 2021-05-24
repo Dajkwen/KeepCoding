@@ -176,6 +176,11 @@ public class Sorting {
         return findMinValue(next, 0);
     }
 
+    /**
+     * 锦标赛排序
+     * 将数组元素挂在二叉树的叶子上，每轮选出一个最小值
+     * @param src
+     */
     public void tournamentSortV2(int[] src) {
         //创建一棵完全二叉树，将元素放在叶子上
         //log2 b = log10 b / log10 2
@@ -202,6 +207,9 @@ public class Sorting {
             System.out.print(c + " ");
         }
 
+        //如果这样做排序，其实还没领会到锦标赛排序的精髓
+        //关键点在于，找出第一个元素之后，按照原路径就可以很快找到第二个
+        //因为第二个和第一个是有一定关系的。
         for (int k = 0; k < src.length; k++) {
             //做一轮锦标赛
             for (int i = array.length - 1; i > 0; i = i - 2) {
@@ -224,6 +232,93 @@ public class Sorting {
                 }
             }
             array[index] = invalid;
+        }
+
+        System.out.print("\n排序后：");
+        for (int c : src) {
+            System.out.print(c + " ");
+        }
+    }
+
+    /**
+     * 锦标赛排序
+     * 参考内容 https://juejin.cn/post/6944185487691087902
+     * 做了改进，抓住核心点，后一个元素基于前一个元素的路径做排序
+     * @param src
+     */
+    public void tournamentSortV3(int[] src) {
+        //创建一棵完全二叉树，将元素放在叶子上
+        //log2 b = log10 b / log10 2
+        int treeLevel = (int) (Math.log10(src.length) / Math.log10(2) + 1);
+        //总节点数是 2^n -1 ，n 为最大高度
+        int[] array = new int[(int) Math.pow(2, treeLevel) - 1];
+        //倒叙赋值
+        int j = src.length - 1;
+        int invalid = 0;
+        for (int i = array.length - 1; i > -1; i--) {
+            if (j > -1) {
+                array[i] = src[j];
+                if (src[j] > invalid) {
+                    invalid = src[j];
+                }
+                j--;
+            } else {
+                array[i] = -2;
+            }
+        }
+        invalid++;
+        System.out.print("排序前：");
+        for (int c : src) {
+            System.out.print(c + " ");
+        }
+        //先做一遍锦标赛
+        for (int i = array.length - 1; i > 0; i = i - 2) {
+            if (array[i] < array[i - 1]) {
+                int p = (i - 2) / 2;
+                array[p] = array[i];
+            } else {
+                int p = (i - 1) / 2;
+                array[p] = array[i - 1];
+            }
+        }
+        src[0] = array[0];
+
+        for (int k = 1; k < src.length; k++) {
+            //标记胜者
+            int index = 0;
+            while ((2 * index + 2) < array.length || (2 * index + 1) < array.length) {
+                if (array[index] == array[2 * index + 1]) {
+                    index = 2 * index + 1;
+                } else {
+                    index = 2 * index + 2;
+                }
+            }
+            array[index] = invalid;
+            //先直接晋级隔壁那位
+            int p = 0;
+            if (index % 2 != 0) {
+                //要把右孩子上升
+                p = (index - 1) / 2;
+                array[p] = array[index + 1];
+            } else {
+                p = (index - 2) / 2;
+                array[p] = array[index - 1];
+            }
+            //从刚才晋级的那位所在组开始重排，
+            if (p % 2 != 0) {
+                //左
+                p = p + 1;
+            }
+            for (int i = p; i > 0; i = i - 2) {
+                if (array[i] < array[i - 1]) {
+                    int parent = (i - 2) / 2;
+                    array[parent] = array[i];
+                } else {
+                    int parent = (i - 1) / 2;
+                    array[parent] = array[i - 1];
+                }
+            }
+            src[k] = array[0];
         }
 
         System.out.print("\n排序后：");
