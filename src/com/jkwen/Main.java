@@ -1,6 +1,7 @@
 package com.jkwen;
 
 import com.jkwen.coding.Coding;
+import com.jkwen.coding.Sorting;
 import com.jkwen.coding.TreeNode;
 
 import java.util.Scanner;
@@ -41,6 +42,7 @@ public class Main {
 //        System.out.println();
 //        System.out.println("当前树高_Stack");
 //        System.out.print(Coding.launch().getTreeHeight_Stack(tree));
-        Coding.launch().cocktailSort(new int[]{8,1,2,3,4,5,6,7});
+//        Coding.launch().createBinaryTreeInLeaf(new int[]{3,4,1,6,2,8,7,9});
+        Sorting.prepare().tournamentSortV2(new int[]{3,4,1,6,2,8,7,9});
     }
 }

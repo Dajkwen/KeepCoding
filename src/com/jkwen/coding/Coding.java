@@ -46,6 +46,31 @@ public class Coding {
         return binaryTree;
     }
 
+    /**
+     * 将元素置于叶子上
+     * @param src
+     * @return
+     */
+    public TreeNode createBinaryTreeInLeaf(int[] src) {
+        //log2 b = log10 b / log10 2
+        int treeLevel = (int) (Math.log10(src.length) / Math.log10(2) + 1);
+        //总节点数是 2^n -1 ，n 为最大高度
+        int[] array = new int[(int) Math.pow(2, treeLevel) - 1];
+        //倒叙赋值
+        int j = src.length - 1;
+        for (int i = array.length - 1; i > -1; i--) {
+            if (j > -1) {
+                array[i] = src[j];
+                j--;
+            } else {
+                array[i] = -2;
+            }
+        }
+        binaryTree = createTreeNode(array, 0, 1);
+        printTree(binaryTree);
+        return binaryTree;
+    }
+
     private TreeNode createTreeNode(int[] src, int p, int level) {
         int left = 2 * p + 1;
         int right = 2 * p + 2;
@@ -386,92 +411,5 @@ public class Coding {
             stack.remove(node);
         }
         return height;
-    }
-
-    /**
-     * 冒泡排序
-     * @param src
-     */
-    public void bubbleSort(int[] src) {
-        System.out.print("排序前：");
-        for (int j : src) {
-            System.out.print(j + " ");
-        }
-
-        int sortEnd = src.length - 1;
-        for (int loopTime = 1; loopTime < src.length; loopTime++) {
-            int exchangeIndex = sortEnd;
-            boolean isSorted = true;
-            for (int i = 0; i < sortEnd; i++) {
-                if (src[i] > src[i + 1]) {
-                    int temp = src[i + 1];
-                    src[i + 1] = src[i];
-                    src[i] = temp;
-                    exchangeIndex = i;
-                    isSorted = false;
-                }
-            }
-            if (isSorted) {
-                break;
-            }
-            sortEnd = exchangeIndex;
-        }
-
-        System.out.print("\n排序后：");
-        for (int j : src) {
-            System.out.print(j + " ");
-        }
-    }
-
-    /**
-     * 冒泡排序的演变-鸡尾酒排序
-     * @param src
-     */
-    public void cocktailSort(int[] src) {
-        System.out.print("排序前：");
-        for (int j : src) {
-            System.out.print(j + " ");
-        }
-
-        int rightSortEnd = src.length - 1;
-        int leftSortEnd = 0;
-        for (int loopTime = 0; loopTime < src.length / 2; loopTime++) {
-            boolean isSorted = true;
-            int lastSortIndex = rightSortEnd;
-            for (int i = loopTime; i < rightSortEnd; i++) {
-                if (src[i] > src[i + 1]) {
-                    int temp = src[i + 1];
-                    src[i + 1] = src[i];
-                    src[i] = temp;
-                    isSorted = false;
-                    lastSortIndex = i;
-                }
-            }
-            if (isSorted) {
-                break;
-            }
-            rightSortEnd = lastSortIndex;
-
-            isSorted = true;
-            lastSortIndex = leftSortEnd;
-            for (int i = src.length - 1 - loopTime; i > leftSortEnd; i--) {
-                if (src[i] < src[i - 1]) {
-                    int temp = src[i - 1];
-                    src[i - 1] = src[i];
-                    src[i] = temp;
-                    isSorted = false;
-                    lastSortIndex = i;
-                }
-            }
-            if (isSorted) {
-                break;
-            }
-            leftSortEnd = lastSortIndex;
-        }
-
-        System.out.print("\n排序后：");
-        for (int j : src) {
-            System.out.print(j + " ");
-        }
     }
 }
