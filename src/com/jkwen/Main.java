@@ -44,6 +44,6 @@ public class Main {
 //        System.out.print(Coding.launch().getTreeHeight_Stack(tree));
 //        Coding.launch().createBinaryTreeInLeaf(new int[]{3,4,1,6,2,8,7,9});
 //        Sorting.prepare().tournamentSortV3(new int[]{3,4,1,6,2,8,7,9});
-        Sorting.prepare().tournamentSortV3(new int[]{8,1,2,3,4,5,6,7});
+        Sorting.prepare().heapSort(new int[]{8,1,2,3,4,5,6,7});
     }
 }

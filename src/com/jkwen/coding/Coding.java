@@ -34,6 +34,13 @@ public class Coding {
         return binaryTree;
     }
 
+    public TreeNode createBinaryTree(int[] src) {
+        binaryTree = createTreeNode(src, 0, 1);
+        //在这里把树展示出来，方便查看
+        printTree(binaryTree);
+        return binaryTree;
+    }
+
     /**
      * 内建方式创建一棵二叉树
      * @return

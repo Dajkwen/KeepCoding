@@ -326,4 +326,124 @@ public class Sorting {
             System.out.print(c + " ");
         }
     }
+
+    public void heapSort(int[] src) {
+        //先将数组映射成一棵二叉树，这里还是以数组表示二叉树
+        //期望从小到大排序，那么可以建立一个大根堆，这样堆顶的值可以挂在最后
+        //从最后一个非叶子节点开始，位置为 src.length / 2
+        System.out.print("排序前：");
+        for (int c : src) {
+            System.out.print(c + " ");
+        }
+        //完成了一次堆调整
+        int index = (src.length - 1) / 2;
+        while (index > -1) {
+            adjustHeap_withLoop(src, index, src.length);
+            index--;
+        }
+        //接着移动最大值，然后从顶部开始重新调整
+        for (int i = src.length - 1; i > 0; i--) {
+            int temp = src[0];
+            src[0] = src[i];
+            src[i] = temp;
+            adjustHeap_withLoop(src, 0, i);
+        }
+
+        System.out.print("\n排序后：");
+        for (int c : src) {
+            System.out.print(c + " ");
+        }
+    }
+
+    private void adjustHeap(int[] src, int parent, int len) {
+        int left = 2 * parent + 1;
+        int right = 2 * parent + 2;
+        int index = left;
+        if (right < len) {
+            if (src[right] > src[left]) {
+                index++;
+            }
+        }
+        if (index != left || (index < len && src[index] > src[parent])) {
+            int temp = src[index];
+            src[index] = src[parent];
+            src[parent] = temp;
+            //此时完成了一次调整，且三者中的最大值在根节点
+            //接着分别以左节点和右节点出发继续调整
+            if (index != left) {
+                adjustHeap(src, right, len);
+            } else {
+                adjustHeap(src, left, len);
+            }
+        }
+    }
+
+    private void adjustHeap_withLoop(int[] src, int parent, int len) {
+        int left = 2 * parent + 1;
+        int right = 2 * parent + 2;
+        int index = left;
+        int temp = src[parent];
+        while (index < len) {
+            if (right < len) {
+                if (src[right] > src[left]) {
+                    index++;
+                }
+            }
+            if (index != left || src[index] > temp) {
+                src[parent] = src[index];
+                parent = index;
+                left = 2 * parent + 1;
+                right = 2 * parent + 2;
+                index = left;
+            } else {
+                break;
+            }
+        }
+        src[parent] = temp;
+    }
+
+
+
+    public void standHeapSort(int[] src, int n) {
+        System.out.print("排序前：");
+        for (int c : src) {
+            System.out.print(c + " ");
+        }
+
+        int i;
+        int temp;
+        for (i = n / 2; i >= 1; --i) {
+            standAdjustHeap(src, i, n);
+        }
+        for (i = n; i >= 2; --i) {
+            temp = src[1];
+            src[1] = src[i];
+            src[i] = temp;
+            standAdjustHeap(src, 1, i - 1);
+        }
+
+        System.out.print("\n排序后：");
+        for (int c : src) {
+            System.out.print(c + " ");
+        }
+
+    }
+    private void standAdjustHeap(int[] src, int low, int high) {
+        int i = low, j = 2 * i;//j 代表 i 的左节点
+        int temp = src[i];
+        while(j <= high) {
+            if (j < high && src[j] < src[j + 1]) {
+                //如果有右节点，先判断左右节点大小
+                ++j;
+            }
+            if (temp < src[j]) {
+                src[i] = src[j];
+                i = j;
+                j = 2 * i;
+            } else {
+                break;
+            }
+        }
+        src[i] = temp;
+    }
 }
