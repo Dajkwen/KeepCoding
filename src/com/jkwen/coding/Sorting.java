@@ -327,6 +327,124 @@ public class Sorting {
         }
     }
 
+    /**
+     * 对锦标赛重新梳理，
+     * 算法核心主要有两个过程，
+     * 1.根据数组元素建立一棵完全二叉树（其实应该是棵满二叉），并完成一次锦标赛，选出最小值（最大值）
+     * 2.每次摘取最小值后，再从最小值的叶子节点出发再开始一轮锦标赛
+     *
+     * 构建一棵满二叉，使得值都在叶子节点，已知数组长度，求树高，总节点数
+     * 树高 = log2 src.length 的值向上取整，例如 2.8 取整为 3, 2.1 也取整为 3，然后 + 1
+     * 总节点数 = 2^树高 - 1
+     * @param src
+     */
+    public void tournamentSortV4(int[] src) {
+        System.out.print("排序前：");
+        for (int c : src) {
+            System.out.print(c + " ");
+        }
+
+        TreeNode[] array = buildTreeInLeaf(src);
+        for (int i = 0; i < src.length; i++) {
+            //每次从根节点取出最小值赋值
+            src[i] = array[0].data;
+            //当 i == src.length - 1 时，其实已经得到完整结果了，再进行元素排序的话，最后都是 null
+            //且即使做了最后一遍排序，i++ 后也会使条件不满足，所以干脆不做，节省一次
+            if (i < src.length - 1) {
+                //这里利用树节点存储了下标，如果不存的话，需要从根节点开始对比节点值来找到这条路径的叶子位置
+                int index = array[0].index;
+                //沿着最小值路径，将元素剔除，这里保存了下标，省去了路径回溯
+                array[index] = null;
+                //从剔除的位置开始进行相关位置调整，不相关的其实依然有序
+                while (index > 0) {
+                    TreeNode parent = array[index];
+                    if (index % 2 == 0) {
+                        TreeNode left = array[index - 1];
+                        if (array[index] != null && left != null) {
+                            if (array[index].data < left.data) {
+                                parent = array[index];
+                            } else {
+                                parent = left;
+                            }
+                        } else if (array[index] == null) {
+                            parent = left;
+                        }
+                        //偶数，说明是右孩子,将左孩子上升
+                        index = (index - 2) / 2;
+                    } else {
+                        //左孩子
+                        TreeNode right = array[index + 1];
+                        if (array[index] != null && right != null) {
+                            if (array[index].data < right.data) {
+                                parent = array[index];
+                            } else {
+                                parent = right;
+                            }
+                        } else if (array[index] == null) {
+                            parent = right;
+                        }
+                        index = (index - 1) / 2;
+                    }
+                    array[index] = parent;
+//                array[(index - 1) / 2] = parent;
+                }
+            }
+        }
+
+        System.out.print("\n排序后：");
+        for (int c : src) {
+            System.out.print(c + " ");
+        }
+    }
+
+    /**
+     * 构建一棵元素都在叶子节点的完全二叉树
+     * 并完成第一次锦标赛排序
+     * @param src
+     * @return
+     */
+    private TreeNode[] buildTreeInLeaf(int[] src) {
+        //找到那层能放的下 src 的叶子数
+//        int leafSize = 1;
+//        while (leafSize < src.length) {
+//            leafSize = leafSize << 1;
+//        }
+//        TreeNode[] array = new TreeNode[leafSize * 2 - 1];
+        int treeLevel = (int) (Math.ceil(Math.log10(src.length) / Math.log10(2)) + 1);
+        TreeNode[] array = new TreeNode[(int) (Math.pow(2, treeLevel) - 1)];
+        //倒叙放入叶子节点中
+        int j = src.length - 1;
+        for (int i = array.length - 1; i > array.length - src.length - 1; i--) {
+            array[i] = new TreeNode(src[j]);
+            array[i].index = i;
+            j--;
+        }
+        //对整个树进行遍历排序，使得最小值在根节点
+        for (int i = array.length - 1; i > 0; i = i - 2) {
+            TreeNode left = array[i - 1];
+            TreeNode right = array[i];
+            TreeNode parent = null;
+            if (left != null && right != null) {
+                if (left.data < right.data) {
+                    parent = left;
+                } else {
+                    parent = right;
+                }
+            } else if (left == null && right != null) {
+                parent = right;
+            }
+            array[(i - 1) / 2] = parent;
+        }
+        return array;
+    }
+
+    /**
+     * 堆排序的思路也主要分两步
+     * 1.对数组表示的完全二叉树，从最后一个非叶子节点开始做堆调整
+     * 2.交换堆顶值，缩小范围重新进行堆调整
+     * 最后一个非叶子节点的坐标 = src.length / 2 向下取整 - 1
+     * @param src
+     */
     public void heapSort(int[] src) {
         //先将数组映射成一棵二叉树，这里还是以数组表示二叉树
         //期望从小到大排序，那么可以建立一个大根堆，这样堆顶的值可以挂在最后
@@ -335,13 +453,15 @@ public class Sorting {
         for (int c : src) {
             System.out.print(c + " ");
         }
-        //完成了一次堆调整
-        int index = (src.length - 1) / 2;
+        //从第一个非叶子节点开始
+        //依次对所有非叶子节点进行调整
+        int index = Math.floorDiv(src.length, 2) - 1;
         while (index > -1) {
             adjustHeap_withLoop(src, index, src.length);
             index--;
         }
-        //接着移动最大值，然后从顶部开始重新调整
+        //经过前面的初始堆调整已经基本有序了，
+        //所以接下去改变堆顶后，只要再从堆顶开始调整即可
         for (int i = src.length - 1; i > 0; i--) {
             int temp = src[0];
             src[0] = src[i];
@@ -378,6 +498,14 @@ public class Sorting {
         }
     }
 
+    /**
+     * 从给定节点出发，分别试探左右孩子，选出最大值上移，
+     * 然后再从移动的一遍作为新的节点继续试探新的左右孩子
+     * 直到超出限定返回
+     * @param src
+     * @param parent
+     * @param len
+     */
     private void adjustHeap_withLoop(int[] src, int parent, int len) {
         int left = 2 * parent + 1;
         int right = 2 * parent + 2;
@@ -400,50 +528,5 @@ public class Sorting {
             }
         }
         src[parent] = temp;
-    }
-
-
-
-    public void standHeapSort(int[] src, int n) {
-        System.out.print("排序前：");
-        for (int c : src) {
-            System.out.print(c + " ");
-        }
-
-        int i;
-        int temp;
-        for (i = n / 2; i >= 1; --i) {
-            standAdjustHeap(src, i, n);
-        }
-        for (i = n; i >= 2; --i) {
-            temp = src[1];
-            src[1] = src[i];
-            src[i] = temp;
-            standAdjustHeap(src, 1, i - 1);
-        }
-
-        System.out.print("\n排序后：");
-        for (int c : src) {
-            System.out.print(c + " ");
-        }
-
-    }
-    private void standAdjustHeap(int[] src, int low, int high) {
-        int i = low, j = 2 * i;//j 代表 i 的左节点
-        int temp = src[i];
-        while(j <= high) {
-            if (j < high && src[j] < src[j + 1]) {
-                //如果有右节点，先判断左右节点大小
-                ++j;
-            }
-            if (temp < src[j]) {
-                src[i] = src[j];
-                i = j;
-                j = 2 * i;
-            } else {
-                break;
-            }
-        }
-        src[i] = temp;
     }
 }
