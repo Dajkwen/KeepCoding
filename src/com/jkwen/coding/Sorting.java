@@ -1,5 +1,9 @@
 package com.jkwen.coding;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
 public class Sorting {
     private Sorting() {
 
@@ -528,5 +532,147 @@ public class Sorting {
             }
         }
         src[parent] = temp;
+    }
+
+    /**
+     * 快速排序
+     * @param src
+     */
+    public void quickSort(int[] src) {
+        System.out.print("排序前：");
+        for (int c : src) {
+            System.out.print(c + " ");
+        }
+
+//        quickOnce_withDLoop(src, 0, src.length - 1);
+//        quickOnce_withSLoop(src, 0, src.length - 1);
+        quick_withStack(src);
+
+        System.out.print("\n排序后：");
+        for (int c : src) {
+            System.out.print(c + " ");
+        }
+    }
+
+    /**
+     * 快排的双边循环，
+     * @param src
+     * @param left
+     * @param right
+     */
+    private void quickOnce_withDLoop(int[] src, int left, int right) {
+        if (left >= right) {
+            return;
+        }
+        int pivot = left;
+        int rightPos = right;
+
+        while (left < right) {
+            while (left < right && src[right] > src[pivot]) {
+                right--;
+            }
+            while (left < right && src[left] <= src[pivot]) {
+                left++;
+            }
+            if (left < right) {
+                //exchange
+                int temp = src[left];
+                src[left] = src[right];
+                src[right] = temp;
+            }
+        }
+        if (pivot != left) {
+            int temp = src[pivot];
+            src[pivot] = src[left];
+            src[left] = temp;
+        }
+
+        quickOnce_withDLoop(src, 0, left - 1);
+        quickOnce_withDLoop(src, left + 1, rightPos);
+    }
+
+    /**
+     * 快排的单边循环
+     * @param src
+     * @param left
+     * @param right
+     */
+    private void quickOnce_withSLoop(int[] src, int left, int right) {
+        if (left >= right) {
+            return;
+        }
+        int pivot = left;
+        int area = pivot;
+        for (int i = left + 1; i <= right; i++) {
+            if (src[i] <= src[pivot]) {
+                area++;
+                //exchange
+                if (i != area) {
+                    int temp = src[area];
+                    src[area] = src[i];
+                    src[i] = temp;
+                }
+            }
+        }
+        if (pivot != area) {
+            int temp = src[pivot];
+            src[pivot] = src[area];
+            src[area] = temp;
+        }
+
+        quickOnce_withSLoop(src, 0, area - 1);
+        quickOnce_withSLoop(src, area + 1, right);
+    }
+
+    private void quick_withStack(int[] src) {
+        Stack<Map<String, Integer>> stack = new Stack<>();
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("left", 0);
+        map.put("right", src.length - 1);
+        stack.push(map);
+        while (!stack.isEmpty()) {
+            HashMap<String, Integer> param = (HashMap<String, Integer>) stack.pop();
+            int pivot = getPivotPosition(src, param.get("left"), param.get("right"));
+            if (pivot >= 0) {
+                map = new HashMap<>();
+                map.put("left", pivot + 1);
+                map.put("right", param.get("right"));
+                stack.push(map);
+
+                map = new HashMap<>();
+                map.put("left", 0);
+                map.put("right", pivot - 1);
+                stack.push(map);
+            }
+        }
+    }
+
+    private int getPivotPosition(int[] src, int left, int right) {
+        if (left >= right) {
+            return -1;
+        }
+        int pivot = left;
+        int rightPos = right;
+
+        while (left < right) {
+            while (left < right && src[right] > src[pivot]) {
+                right--;
+            }
+            while (left < right && src[left] <= src[pivot]) {
+                left++;
+            }
+            if (left < right) {
+                //exchange
+                int temp = src[left];
+                src[left] = src[right];
+                src[right] = temp;
+            }
+        }
+        if (pivot != left) {
+            int temp = src[pivot];
+            src[pivot] = src[left];
+            src[left] = temp;
+        }
+        return left;
     }
 }

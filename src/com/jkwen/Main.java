@@ -42,10 +42,12 @@ public class Main {
 //        System.out.println();
 //        System.out.println("当前树高_Stack");
 //        System.out.print(Coding.launch().getTreeHeight_Stack(tree));
-        System.out.println("\n锦标赛排序");
+//        System.out.println("\n锦标赛排序");
 //        Sorting.prepare().tournamentSortV3(new int[]{3,4,1,6,2,8,7,9});
-        Sorting.prepare().tournamentSortV4(new int[]{6,3,1,4,2});
-        System.out.println("\n堆排序");
-        Sorting.prepare().heapSort(new int[]{6,3,1,4,2});
+//        Sorting.prepare().tournamentSortV4(new int[]{6,3,1,4,2});
+//        System.out.println("\n堆排序");
+//        Sorting.prepare().heapSort(new int[]{6,6,6,6,6,6,6,6});
+        System.out.println("\n快速排序");
+        Sorting.prepare().quickSort(new int[]{9,8,7,6,5,4,3,2,1});
     }
 }
